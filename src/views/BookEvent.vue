@@ -38,7 +38,7 @@
     <!-- Date picker -->
     <div class="form-group">
       <label for="datetimepicker">Select Date:</label>
-      <input id="datetimepicker" type="text" placeholder="Select a date" class="flatpickr-input" />
+      <input id="datetimepicker" type="text" placeholder="Select a date" class="form-control" />
     </div>
 
     <!-- Additional form fields -->
@@ -181,14 +181,19 @@ const fetchEventSpaces = async () => {
 
 const updateDatePicker = () => {
   flatpickr('#datetimepicker', {
-    dateFormat: 'Y-m-d',
-    minDate: 'today',
-    disable: bookedDates.value.map((date) => new Date(date)),
-    onChange: (selectedDates) => {
-      formData.value.date = selectedDates[0] ? selectedDates[0].toISOString().split('T')[0] : ''
-      fetchBookedDatesAndTimes() // Refresh booked dates after selecting a date
-    }
-  })
+  dateFormat: 'Y-m-d',
+  minDate: 'today',
+  disable: bookedDates.value.map((date) => new Date(date)),
+  onChange: (selectedDates) => {
+    // Convert selected date to the correct format before saving
+    formData.value.date = selectedDates[0] 
+      ? new Date(selectedDates[0].getTime() - selectedDates[0].getTimezoneOffset() * 60000)
+          .toISOString()
+          .split('T')[0] 
+      : ''
+    fetchBookedDatesAndTimes() // Refresh booked dates after selecting a date
+  }
+})
 }
 
 const fetchBookedDatesAndTimes = () => {
@@ -453,6 +458,7 @@ const printReceipt = () => {
 <style scoped>
 .booking-container {
   padding: 20px;
+  background-color: #ffff;
 }
 
 .event-cards {
@@ -481,6 +487,7 @@ const printReceipt = () => {
   width: 100%;
   padding: 10px;
   margin-top: 5px;
+  /* border: 1px solid black; */
 }
 
 .form-group {
